@@ -296,7 +296,7 @@ window.Quarto = {
 </tbody>
 </table>
 <div id="def-stash" class="theorem definition">
-<p><span class="theorem-title"><strong>Def 1 (Stash)</strong></span> <br> Stashとは，作業中の未コミットの変更を一時的に退避させておくためのLIFO（後入れ先出し）スタックを指す．「急にfetchを行いたいが，現在の作業をコミットしたくない」という場面で用いられる．</p>
+<p><span class="theorem-title"><strong>Def. 1 (Stash)</strong></span> <br> Stashとは，作業中の未コミットの変更を一時的に退避させておくためのLIFO（後入れ先出し）スタックを指す．「急にfetchを行いたいが，現在の作業をコミットしたくない」という場面で用いられる．</p>
 </div>
 <hr>
 </section>
@@ -304,13 +304,13 @@ window.Quarto = {
 <h2 class="anchored" data-anchor-id="sec-pointers">2. ポインタという考え方</h2>
 <p>Gitの挙動は，「ポインタ」と呼ばれる場所を示す名札を，どのコミットへ向けるかによって決まると整理できる．ここでは主要な3種のポインタを導入する．</p>
 <div id="def-head" class="theorem definition">
-<p><span class="theorem-title"><strong>Def 2 (HEAD)</strong></span> <br> HEADとは，現在ワーキングツリーに展開されているコミットを指すポインタである．通常はブランチ名を経由して，間接的にコミットを指す．</p>
+<p><span class="theorem-title"><strong>Def. 2 (HEAD)</strong></span> <br> HEADとは，現在ワーキングツリーに展開されているコミットを指すポインタである．通常はブランチ名を経由して，間接的にコミットを指す．</p>
 </div>
 <div id="def-branch-pointer" class="theorem definition">
-<p><span class="theorem-title"><strong>Def 3 (ブランチ)</strong></span> <br> ブランチ（例：<code>main</code>）とは，手元の歴史における最先端のコミットに付されたラベルを指す．新たなコミットが生成されるたびに，当該ブランチは自動的に新しいコミットへ移動する．</p>
+<p><span class="theorem-title"><strong>Def. 3 (ブランチ)</strong></span> <br> ブランチ（例：<code>main</code>）とは，手元の歴史における最先端のコミットに付されたラベルを指す．新たなコミットが生成されるたびに，当該ブランチは自動的に新しいコミットへ移動する．</p>
 </div>
 <div id="def-remote-tracking-branch" class="theorem definition">
-<p><span class="theorem-title"><strong>Def 4 (リモート追跡ブランチ)</strong></span> <br> リモート追跡ブランチ（例：<code>origin/main</code>）とは，前回の通信時点におけるリモートリポジトリ上のブランチの位置を記録したものを指す．<code>fetch</code>または<code>push</code>の実行時にのみ更新され，手動で移動させることはできない．</p>
+<p><span class="theorem-title"><strong>Def. 4 (リモート追跡ブランチ)</strong></span> <br> リモート追跡ブランチ（例：<code>origin/main</code>）とは，前回の通信時点におけるリモートリポジトリ上のブランチの位置を記録したものを指す．<code>fetch</code>または<code>push</code>の実行時にのみ更新され，手動で移動させることはできない．</p>
 </div>
 <section id="同期が取れている状態" class="level3">
 <h3 class="anchored" data-anchor-id="同期が取れている状態">2-1. 同期が取れている状態</h3>
@@ -457,7 +457,7 @@ Important
 <h3 class="anchored" data-anchor-id="受信プロセス">3-2. 受信プロセス</h3>
 <ol start="4" type="1">
 <li><strong><code>git fetch</code></strong>（リモートリポジトリ→ローカルリポジトリ）：サーバーから最新データを取得するが，ワーキングツリーには反映しない．<code>origin/main</code>のみが更新されるため，安全な操作である</li>
-<li><strong><code>git merge</code></strong>（ローカルリポジトリ→ワーキングツリー）：fetchによって取得したデータと，手元のデータを統合する．ファイルの内容が書き換わるため，ここで<a href="#def-conflict" class="quarto-xref">Def&nbsp;6</a>が生じる可能性がある</li>
+<li><strong><code>git merge</code></strong>（ローカルリポジトリ→ワーキングツリー）：fetchによって取得したデータと，手元のデータを統合する．ファイルの内容が書き換わるため，ここで<a href="#def-conflict" class="quarto-xref">Def.&nbsp;6</a>が生じる可能性がある</li>
 <li><strong><code>git pull</code></strong>（リモートリポジトリ→ワーキングツリー）：<code>fetch</code>と<code>merge</code>を連続して実行する操作である．内容を確認せずに統合が行われるため，競合の発生時に意図しない結果を招くことがある．</li>
 </ol>
 <p><span class="math display">\[
@@ -496,7 +496,7 @@ Important
 </section>
 <section id="sec-stash" class="level2">
 <h2 class="anchored" data-anchor-id="sec-stash">5. 緊急避難：Stash</h2>
-<p><strong><code>git stash</code></strong>（ワーキングツリー⇄<a href="#def-stash" class="quarto-xref">Def&nbsp;1</a>）は，作業中の未コミットの変更を，一時的に<a href="#def-stash" class="quarto-xref">Def&nbsp;1</a>へ退避させる操作である．「急にfetchを行いたいが，現在の作業はコミットしたくない」という場面で利用する．退避させた変更は，<code>git stash pop</code>によってワーキングツリーへ復帰させることができる．</p>
+<p><strong><code>git stash</code></strong>（ワーキングツリー⇄<a href="#def-stash" class="quarto-xref">Def.&nbsp;1</a>）は，作業中の未コミットの変更を，一時的に<a href="#def-stash" class="quarto-xref">Def.&nbsp;1</a>へ退避させる操作である．「急にfetchを行いたいが，現在の作業はコミットしたくない」という場面で利用する．退避させた変更は，<code>git stash pop</code>によってワーキングツリーへ復帰させることができる．</p>
 <hr>
 </section>
 <section id="sec-sync-trouble" class="level2">
@@ -512,7 +512,7 @@ Important
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> config pull.rebase false</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>これにより，以降枝分かれが生じた場合には，自動的に<strong>マージ</strong>（合流コミットの作成）という方式によって解決されるようになる．</p>
 <div id="def-merge-rebase" class="theorem definition">
-<p><span class="theorem-title"><strong>Def 5 (マージとリベースの違い)</strong></span> <br></p>
+<p><span class="theorem-title"><strong>Def. 5 (マージとリベースの違い)</strong></span> <br></p>
 <ul>
 <li><strong>マージ（Merge）</strong>：2つの道筋を合流させ，新たな結節点（マージコミット）を作成する方式である．歴史は分岐した形のまま残るが，実際の経緯に忠実であり，安全性が高い．</li>
 <li><strong>リベース（Rebase）</strong>：手元の変更履歴を，リモートの最新版の後方へ付け替える方式である．歴史は一直線に整理されるが，操作にはより高度な習熟を要する．</li>
@@ -527,7 +527,7 @@ Important
 <li><strong>コンフリクト</strong>：方針は決定済みであるが，<strong>ファイルの内容</strong>が衝突し，自動的な統合が行えない段階の事象を指す</li>
 </ul>
 <div id="def-conflict" class="theorem definition">
-<p><span class="theorem-title"><strong>Def 6 (コンフリクト)</strong></span> <br> コンフリクトとは，複数の変更を統合する際に，同一箇所への変更が競合し，Gitが自動的に統合を行えない状態を指す．発生時には，ファイル内に<code>&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD</code>のような記号が挿入される．対処は次の手順による．</p>
+<p><span class="theorem-title"><strong>Def. 6 (コンフリクト)</strong></span> <br> コンフリクトとは，複数の変更を統合する際に，同一箇所への変更が競合し，Gitが自動的に統合を行えない状態を指す．発生時には，ファイル内に<code>&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD</code>のような記号が挿入される．対処は次の手順による．</p>
 <ol type="1">
 <li>エディタ上に表示される選択肢（例：「両方の変更を取り込む」）から方針を選ぶ</li>
 <li>ファイルの内容を整理した上で保存する</li>
@@ -566,7 +566,7 @@ Important
 </tr>
 <tr class="even">
 <td>HEAD</td>
-<td><a href="#def-head" class="quarto-xref">Def&nbsp;2</a>に対応する表示である</td>
+<td><a href="#def-head" class="quarto-xref">Def.&nbsp;2</a>に対応する表示である</td>
 </tr>
 <tr class="odd">
 <td>Origin</td>
@@ -677,27 +677,27 @@ Tip
 <tbody>
 <tr class="odd">
 <td>Stash</td>
-<td><a href="#def-stash" class="quarto-xref">Def&nbsp;1</a>を参照</td>
+<td><a href="#def-stash" class="quarto-xref">Def.&nbsp;1</a>を参照</td>
 </tr>
 <tr class="even">
 <td>HEAD</td>
-<td><a href="#def-head" class="quarto-xref">Def&nbsp;2</a>を参照</td>
+<td><a href="#def-head" class="quarto-xref">Def.&nbsp;2</a>を参照</td>
 </tr>
 <tr class="odd">
 <td>ブランチ</td>
-<td><a href="#def-branch-pointer" class="quarto-xref">Def&nbsp;3</a>を参照</td>
+<td><a href="#def-branch-pointer" class="quarto-xref">Def.&nbsp;3</a>を参照</td>
 </tr>
 <tr class="even">
 <td>リモート追跡ブランチ（<code>origin/main</code>）</td>
-<td><a href="#def-remote-tracking-branch" class="quarto-xref">Def&nbsp;4</a>を参照</td>
+<td><a href="#def-remote-tracking-branch" class="quarto-xref">Def.&nbsp;4</a>を参照</td>
 </tr>
 <tr class="odd">
 <td>コンフリクト</td>
-<td><a href="#def-conflict" class="quarto-xref">Def&nbsp;6</a>を参照</td>
+<td><a href="#def-conflict" class="quarto-xref">Def.&nbsp;6</a>を参照</td>
 </tr>
 <tr class="even">
 <td>マージ／リベース</td>
-<td><a href="#def-merge-rebase" class="quarto-xref">Def&nbsp;5</a>を参照</td>
+<td><a href="#def-merge-rebase" class="quarto-xref">Def.&nbsp;5</a>を参照</td>
 </tr>
 <tr class="odd">
 <td>Fast-forward</td>

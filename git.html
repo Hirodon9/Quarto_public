@@ -298,30 +298,30 @@ Warning
 <pre><code>ワーキングツリー  →  インデックス（ステージングエリア）  →  リポジトリ
 （現在編集中のファイル）  （次の記録対象の仮登録場所）       （記録そのものの保管庫）</code></pre>
 <div id="def-working-tree" class="theorem definition">
-<p><span class="theorem-title"><strong>Def 1 (ワーキングツリー)</strong></span> <br> ワーキングツリーとは，現在エディタ上で編集している，通常のファイルそのものを指す．</p>
+<p><span class="theorem-title"><strong>Def. 1 (ワーキングツリー)</strong></span> <br> ワーキングツリーとは，現在エディタ上で編集している，通常のファイルそのものを指す．</p>
 </div>
 <div id="def-index" class="theorem definition">
-<p><span class="theorem-title"><strong>Def 2 (インデックス（ステージングエリア）)</strong></span> <br> インデックス（ステージングエリア）とは，「次の記録にこのファイルを含める」という仮の決定を保持しておく場所を指す．Web開発の文脈において，本番公開に先立って動作を試験する環境をステージング環境と呼ぶことがあるが，これと類似した位置づけにあると言える．本番（記録）への登録に先立つ，一段階手前の控え室にあたる．</p>
+<p><span class="theorem-title"><strong>Def. 2 (インデックス（ステージングエリア）)</strong></span> <br> インデックス（ステージングエリア）とは，「次の記録にこのファイルを含める」という仮の決定を保持しておく場所を指す．Web開発の文脈において，本番公開に先立って動作を試験する環境をステージング環境と呼ぶことがあるが，これと類似した位置づけにあると言える．本番（記録）への登録に先立つ，一段階手前の控え室にあたる．</p>
 </div>
 <div id="def-repository" class="theorem definition">
-<p><span class="theorem-title"><strong>Def 3 (リポジトリ)</strong></span> <br> リポジトリとは，記録（履歴）が積み重なっていく保管庫を指す．その実体は，フォルダ内部に生成される<code>.git</code>という名称の隠しフォルダである．</p>
+<p><span class="theorem-title"><strong>Def. 3 (リポジトリ)</strong></span> <br> リポジトリとは，記録（履歴）が積み重なっていく保管庫を指す．その実体は，フォルダ内部に生成される<code>.git</code>という名称の隠しフォルダである．</p>
 </div>
-<p><code>git add</code>は，ワーキングツリー（<a href="#def-working-tree" class="quarto-xref">Def&nbsp;1</a>）からインデックス（<a href="#def-index" class="quarto-xref">Def&nbsp;2</a>）への仮登録を行う操作であり，<code>git commit</code>は，インデックスにある内容をリポジトリ（<a href="#def-repository" class="quarto-xref">Def&nbsp;3</a>）へ正式に記録する操作である．この2段階に分離されている理由は，「編集中のファイルが10個あっても，記録の対象としたいのはそのうち3個のみである」という場合のように，<strong>記録の対象を選別した上で記録を行う</strong>ことを可能にするためである．</p>
+<p><code>git add</code>は，ワーキングツリー（<a href="#def-working-tree" class="quarto-xref">Def.&nbsp;1</a>）からインデックス（<a href="#def-index" class="quarto-xref">Def.&nbsp;2</a>）への仮登録を行う操作であり，<code>git commit</code>は，インデックスにある内容をリポジトリ（<a href="#def-repository" class="quarto-xref">Def.&nbsp;3</a>）へ正式に記録する操作である．この2段階に分離されている理由は，「編集中のファイルが10個あっても，記録の対象としたいのはそのうち3個のみである」という場合のように，<strong>記録の対象を選別した上で記録を行う</strong>ことを可能にするためである．</p>
 </section>
 <section id="コミットは履歴上の1単位である" class="level3">
 <h3 class="anchored" data-anchor-id="コミットは履歴上の1単位である">1-2. コミットは履歴上の1単位である</h3>
 <p>Gitの履歴は，「丸とそれを結ぶ線」という図によって説明されることが多い．</p>
 <pre><code>○ ─ ○ ─ ○ ─ ○   ← 丸の各々が1つの「コミット」，すなわちある時点の状態の記録（スナップショット）</code></pre>
 <div id="def-commit" class="theorem definition">
-<p><span class="theorem-title"><strong>Def 4 (コミット)</strong></span> <br> コミットとは，ある時点におけるファイル全体の状態を，まとめて記録したものを指す（名詞としての用法）．また，記録を行う動作そのもの（履歴上の丸を1つ追加する操作）も同一の語で呼ばれる（動詞としての用法）．丸と丸を結ぶ線は，隣接するコミット間の差分（変更内容）を表すものと解釈できる．</p>
+<p><span class="theorem-title"><strong>Def. 4 (コミット)</strong></span> <br> コミットとは，ある時点におけるファイル全体の状態を，まとめて記録したものを指す（名詞としての用法）．また，記録を行う動作そのもの（履歴上の丸を1つ追加する操作）も同一の語で呼ばれる（動詞としての用法）．丸と丸を結ぶ線は，隣接するコミット間の差分（変更内容）を表すものと解釈できる．</p>
 </div>
 <p>ゲームにおけるセーブポイントに例えれば，丸の各々が「セーブデータ」に相当する．3日前の状態へ復帰したい場合，3日前の丸の位置へ切り替えればよい，という発想である．なお，過去の状態への実際の切り替え操作については，本稿の範囲では扱わない．現段階では，「復帰可能な記録が積み重なっていく」という理解で十分である．</p>
 </section>
 <section id="用語の整理" class="level3">
 <h3 class="anchored" data-anchor-id="用語の整理">1-3. 用語の整理</h3>
-<p>リポジトリ（<a href="#def-repository" class="quarto-xref">Def&nbsp;3</a>），ワーキングツリー（<a href="#def-working-tree" class="quarto-xref">Def&nbsp;1</a>）に関連して，以下の用語を併せて整理する．</p>
+<p>リポジトリ（<a href="#def-repository" class="quarto-xref">Def.&nbsp;3</a>），ワーキングツリー（<a href="#def-working-tree" class="quarto-xref">Def.&nbsp;1</a>）に関連して，以下の用語を併せて整理する．</p>
 <div id="def-local-remote" class="theorem definition">
-<p><span class="theorem-title"><strong>Def 5 (ローカルリポジトリ／リモートリポジトリ)</strong></span> <br> ローカルリポジトリとは，自分のPC内部に存在するリポジトリ（<a href="#def-repository" class="quarto-xref">Def&nbsp;3</a>）を指す．リモートリポジトリとは，サーバー（本稿の場合はGitHub）の内部に存在するリポジトリを指す．</p>
+<p><span class="theorem-title"><strong>Def. 5 (ローカルリポジトリ／リモートリポジトリ)</strong></span> <br> ローカルリポジトリとは，自分のPC内部に存在するリポジトリ（<a href="#def-repository" class="quarto-xref">Def.&nbsp;3</a>）を指す．リモートリポジトリとは，サーバー（本稿の場合はGitHub）の内部に存在するリポジトリを指す．</p>
 </div>
 <table class="caption-top table">
 <colgroup>
@@ -341,15 +341,15 @@ Warning
 </tr>
 <tr class="even">
 <td>リポジトリ</td>
-<td><a href="#def-repository" class="quarto-xref">Def&nbsp;3</a>を参照</td>
+<td><a href="#def-repository" class="quarto-xref">Def.&nbsp;3</a>を参照</td>
 </tr>
 <tr class="odd">
 <td>ワーキングツリー</td>
-<td><a href="#def-working-tree" class="quarto-xref">Def&nbsp;1</a>を参照</td>
+<td><a href="#def-working-tree" class="quarto-xref">Def.&nbsp;1</a>を参照</td>
 </tr>
 <tr class="even">
 <td>ローカルリポジトリ／リモートリポジトリ</td>
-<td><a href="#def-local-remote" class="quarto-xref">Def&nbsp;5</a>を参照</td>
+<td><a href="#def-local-remote" class="quarto-xref">Def.&nbsp;5</a>を参照</td>
 </tr>
 </tbody>
 </table>
@@ -364,12 +364,12 @@ Warning
 <h3 class="anchored" data-anchor-id="練習用ファイルの作成">2-1. 練習用ファイルの作成</h3>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"はじめてのファイル"</span> <span class="op">&gt;</span> memo.txt</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p><code>memo.txt</code>というファイルが生成されていれば成功である．これは現時点ではワーキングツリー（<a href="#def-working-tree" class="quarto-xref">Def&nbsp;1</a>）にのみ存在するファイルであり，Gitの記録には一切登場していない．</p>
+<p><code>memo.txt</code>というファイルが生成されていれば成功である．これは現時点ではワーキングツリー（<a href="#def-working-tree" class="quarto-xref">Def.&nbsp;1</a>）にのみ存在するファイルであり，Gitの記録には一切登場していない．</p>
 </section>
 <section id="フォルダをgitの管理対象とする" class="level3">
 <h3 class="anchored" data-anchor-id="フォルダをgitの管理対象とする">2-2. フォルダをGitの管理対象とする</h3>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> init</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>これにより，このフォルダ内部に<code>.git</code>という隠しフォルダが生成され，これがリポジトリ（<a href="#def-repository" class="quarto-xref">Def&nbsp;3</a>）となる．この時点では記録は何も行われておらず，「記録のための箱」が設置された状態にある．</p>
+<p>これにより，このフォルダ内部に<code>.git</code>という隠しフォルダが生成され，これがリポジトリ（<a href="#def-repository" class="quarto-xref">Def.&nbsp;3</a>）となる．この時点では記録は何も行われておらず，「記録のための箱」が設置された状態にある．</p>
 </section>
 <section id="名前およびメールアドレスの設定最初の1回のみ" class="level3">
 <h3 class="anchored" data-anchor-id="名前およびメールアドレスの設定最初の1回のみ">2-3. 名前およびメールアドレスの設定（最初の1回のみ）</h3>
@@ -382,12 +382,12 @@ Warning
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> add memo.txt</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> status</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><code>git status</code>の実行結果として，現在の状態が表示される．<code>memo.txt</code>が「記録対象として登録される」旨の表示（緑色で表示される）になっていれば成功である．</p>
-<p>これはワーキングツリー（<a href="#def-working-tree" class="quarto-xref">Def&nbsp;1</a>）からインデックス（<a href="#def-index" class="quarto-xref">Def&nbsp;2</a>）への仮登録に相当する．<strong><code>add</code>の時点では，リポジトリー（<a href="#def-repository" class="quarto-xref">Def&nbsp;3</a>）には何も記録されていない．</strong>インデックスという控え室に置かれた状態にとどまる．</p>
+<p>これはワーキングツリー（<a href="#def-working-tree" class="quarto-xref">Def.&nbsp;1</a>）からインデックス（<a href="#def-index" class="quarto-xref">Def.&nbsp;2</a>）への仮登録に相当する．<strong><code>add</code>の時点では，リポジトリー（<a href="#def-repository" class="quarto-xref">Def.&nbsp;3</a>）には何も記録されていない．</strong>インデックスという控え室に置かれた状態にとどまる．</p>
 </section>
 <section id="記録の実行commit" class="level3">
 <h3 class="anchored" data-anchor-id="記録の実行commit">2-5. 記録の実行（commit）</h3>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> commit <span class="at">-m</span> <span class="st">"最初のファイルを追加"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>これにより，インデックス（<a href="#def-index" class="quarto-xref">Def&nbsp;2</a>）にあった内容が，リポジトリ（<a href="#def-repository" class="quarto-xref">Def&nbsp;3</a>）へ正式に記録される．履歴の図において，丸（コミット）が1つ生成された状態であり，最初の「セーブポイント」にあたる．<code>-m</code>に続く文字列は，後から参照した際に「これがどのような変更であったか」を識別するための記述である．</p>
+<p>これにより，インデックス（<a href="#def-index" class="quarto-xref">Def.&nbsp;2</a>）にあった内容が，リポジトリ（<a href="#def-repository" class="quarto-xref">Def.&nbsp;3</a>）へ正式に記録される．履歴の図において，丸（コミット）が1つ生成された状態であり，最初の「セーブポイント」にあたる．<code>-m</code>に続く文字列は，後から参照した際に「これがどのような変更であったか」を識別するための記述である．</p>
 </section>
 <section id="サイクルの再実行" class="level3">
 <h3 class="anchored" data-anchor-id="サイクルの再実行">2-6. サイクルの再実行</h3>
@@ -425,7 +425,7 @@ Warning
 <h3 class="anchored" data-anchor-id="認証が必要となる理由">3-1. 認証が必要となる理由</h3>
 <p>「権利を有する本人であること」を確認する手続きを<strong>認証</strong>と呼ぶ．認証には大別して3種が存在する．</p>
 <div id="def-authentication" class="theorem definition">
-<p><span class="theorem-title"><strong>Def 6 (認証の3分類)</strong></span> <br></p>
+<p><span class="theorem-title"><strong>Def. 6 (認証の3分類)</strong></span> <br></p>
 <ul>
 <li><strong>所持認証</strong>：特定の物を所持していることによって確認する方式（自宅の鍵を所持していること＝入室の権利を有することの根拠となる）</li>
 <li><strong>知識認証</strong>：特定の知識を有することによって確認する方式（ナンバー錠の番号を知っていること）</li>
@@ -434,7 +434,7 @@ Warning
 </div>
 <p>GitHubはネットワークの先方に存在するサーバーであるため，物理的な鍵を提示することはできない．そこで採用されるのが，データ上の「鍵」による所持認証，すなわち<strong>SSH公開鍵認証</strong>である．</p>
 <div id="def-ssh-auth" class="theorem definition">
-<p><span class="theorem-title"><strong>Def 7 (SSH公開鍵認証)</strong></span> <br> SSH公開鍵認証とは，以下の手順によって成立する所持認証の一方式である．</p>
+<p><span class="theorem-title"><strong>Def. 7 (SSH公開鍵認証)</strong></span> <br> SSH公開鍵認証とは，以下の手順によって成立する所持認証の一方式である．</p>
 <ol type="1">
 <li><code>ssh-keygen</code>コマンドにより，<strong>秘密鍵</strong>と<strong>公開鍵</strong>という，対になった2つのデータを生成する</li>
 <li>公開鍵のみをGitHubへ登録する（公開鍵はその名称の通り，第三者に見られても問題のないデータである）</li>
@@ -496,7 +496,7 @@ Note
 <li><code>Enter passphrase (empty for no passphrase):</code>：任意のパスフレーズを入力しEnterキーを押す（入力内容は画面に表示されないが，正しく受け付けられている）</li>
 <li><code>Enter same passphrase again:</code>：確認のため同一のパスフレーズを再入力する</li>
 </ol>
-<p>これにより，<code>~/.ssh/</code>フォルダ内に2つの鍵（<code>id_ed25519</code>および<code>id_ed25519.pub</code>）が生成される．これが<a href="#def-ssh-auth" class="quarto-xref">Def&nbsp;7</a>で述べた秘密鍵・公開鍵の対である．</p>
+<p>これにより，<code>~/.ssh/</code>フォルダ内に2つの鍵（<code>id_ed25519</code>および<code>id_ed25519.pub</code>）が生成される．これが<a href="#def-ssh-auth" class="quarto-xref">Def.&nbsp;7</a>で述べた秘密鍵・公開鍵の対である．</p>
 </section>
 <section id="公開鍵のgithubへの登録" class="level3">
 <h3 class="anchored" data-anchor-id="公開鍵のgithubへの登録">3-4. 公開鍵のGitHubへの登録</h3>
@@ -596,22 +596,22 @@ Warning
 <tr class="odd">
 <td><code>git init</code></td>
 <td>このフォルダを記録対象とする</td>
-<td><code>.git</code>フォルダ（<a href="#def-repository" class="quarto-xref">Def&nbsp;3</a>）の生成</td>
+<td><code>.git</code>フォルダ（<a href="#def-repository" class="quarto-xref">Def.&nbsp;3</a>）の生成</td>
 </tr>
 <tr class="even">
 <td><code>git add</code></td>
 <td>次の記録に含めるファイルを選択する</td>
-<td>ワーキングツリー（<a href="#def-working-tree" class="quarto-xref">Def&nbsp;1</a>）からインデックス（<a href="#def-index" class="quarto-xref">Def&nbsp;2</a>）への仮登録</td>
+<td>ワーキングツリー（<a href="#def-working-tree" class="quarto-xref">Def.&nbsp;1</a>）からインデックス（<a href="#def-index" class="quarto-xref">Def.&nbsp;2</a>）への仮登録</td>
 </tr>
 <tr class="odd">
 <td><code>git commit</code></td>
 <td>選択した内容をセーブポイントとして記録する</td>
-<td>インデックス（ <a href="#def-index" class="quarto-xref">Def&nbsp;2</a>）からリポジトリ（<a href="#def-repository" class="quarto-xref">Def&nbsp;3</a>）への記録（丸を1つ追加）</td>
+<td>インデックス（ <a href="#def-index" class="quarto-xref">Def.&nbsp;2</a>）からリポジトリ（<a href="#def-repository" class="quarto-xref">Def.&nbsp;3</a>）への記録（丸を1つ追加）</td>
 </tr>
 <tr class="even">
 <td><code>git remote add</code></td>
 <td>ローカルとGitHub上の場所を接続する</td>
-<td>ローカルリポジトリ／リモートリポジトリ（<a href="#def-local-remote" class="quarto-xref">Def&nbsp;5</a>）の接続（SSH経由）</td>
+<td>ローカルリポジトリ／リモートリポジトリ（<a href="#def-local-remote" class="quarto-xref">Def.&nbsp;5</a>）の接続（SSH経由）</td>
 </tr>
 <tr class="odd">
 <td><code>git push</code></td>
@@ -735,8 +735,8 @@ Warning
 <p>全てを記憶する必要はないが，以下の3点は念頭に置くこととする．</p>
 <ol type="1">
 <li><strong>現在位置が不明になった場合は<code>pwd</code>，フォルダ内部を確認したい場合は<code>ls</code>を実行する．</strong></li>
-<li><strong>変更を記録する基本の流れは：ファイルの変更 → <code>add</code>（インデックス：<a href="#def-index" class="quarto-xref">Def&nbsp;2</a>への仮登録） → <code>commit</code>（リポジトリ：<a href="#def-repository" class="quarto-xref">Def&nbsp;3</a>への記録） → <code>push</code>（GitHubへの送信）である</strong>（VS Codeの場合：ファイルの変更→＋ボタン→✓ボタン→雲のアイコン）．</li>
-<li><strong><code>git status</code>は，ワーキングツリー（<a href="#def-working-tree" class="quarto-xref">Def&nbsp;1</a>）とインデックスの現状を示す安全装置である．不明な点があれば，まずこれを実行する．</strong></li>
+<li><strong>変更を記録する基本の流れは：ファイルの変更 → <code>add</code>（インデックス：<a href="#def-index" class="quarto-xref">Def.&nbsp;2</a>への仮登録） → <code>commit</code>（リポジトリ：<a href="#def-repository" class="quarto-xref">Def.&nbsp;3</a>への記録） → <code>push</code>（GitHubへの送信）である</strong>（VS Codeの場合：ファイルの変更→＋ボタン→✓ボタン→雲のアイコン）．</li>
+<li><strong><code>git status</code>は，ワーキングツリー（<a href="#def-working-tree" class="quarto-xref">Def.&nbsp;1</a>）とインデックスの現状を示す安全装置である．不明な点があれば，まずこれを実行する．</strong></li>
 </ol>
 <hr>
 </section>
@@ -761,31 +761,31 @@ Warning
 </tr>
 <tr class="even">
 <td>リポジトリ</td>
-<td><a href="#def-repository" class="quarto-xref">Def&nbsp;3</a>を参照</td>
+<td><a href="#def-repository" class="quarto-xref">Def.&nbsp;3</a>を参照</td>
 </tr>
 <tr class="odd">
 <td>ワーキングツリー</td>
-<td><a href="#def-working-tree" class="quarto-xref">Def&nbsp;1</a>を参照</td>
+<td><a href="#def-working-tree" class="quarto-xref">Def.&nbsp;1</a>を参照</td>
 </tr>
 <tr class="even">
 <td>インデックス（ステージングエリア）</td>
-<td><a href="#def-index" class="quarto-xref">Def&nbsp;2</a>を参照</td>
+<td><a href="#def-index" class="quarto-xref">Def.&nbsp;2</a>を参照</td>
 </tr>
 <tr class="odd">
 <td>コミット</td>
-<td><a href="#def-commit" class="quarto-xref">Def&nbsp;4</a>を参照</td>
+<td><a href="#def-commit" class="quarto-xref">Def.&nbsp;4</a>を参照</td>
 </tr>
 <tr class="even">
 <td>ローカルリポジトリ／リモートリポジトリ</td>
-<td><a href="#def-local-remote" class="quarto-xref">Def&nbsp;5</a>を参照</td>
+<td><a href="#def-local-remote" class="quarto-xref">Def.&nbsp;5</a>を参照</td>
 </tr>
 <tr class="odd">
 <td>SSHキー（秘密鍵／公開鍵）</td>
-<td><a href="#def-ssh-auth" class="quarto-xref">Def&nbsp;7</a>を参照</td>
+<td><a href="#def-ssh-auth" class="quarto-xref">Def.&nbsp;7</a>を参照</td>
 </tr>
 <tr class="even">
 <td><code>git status</code></td>
-<td><a href="#def-working-tree" class="quarto-xref">Def&nbsp;1</a>と<a href="#def-index" class="quarto-xref">Def&nbsp;2</a>の現状を表示するコマンド</td>
+<td><a href="#def-working-tree" class="quarto-xref">Def.&nbsp;1</a>と<a href="#def-index" class="quarto-xref">Def.&nbsp;2</a>の現状を表示するコマンド</td>
 </tr>
 <tr class="odd">
 <td><code>git log</code></td>
