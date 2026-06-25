@@ -1,7 +1,5 @@
 ---
 title: ""
-filters:
-  - highlight-text
 ---
 
 # はじめてのGit / GitHub {#sec-git-github-guide}
@@ -11,6 +9,8 @@ filters:
 認証にはSSHキーを用いる方式を採用する．設定はGitHubへの接続を行う章でまとめて行う．
 
 最終的な到達点は，自分のWebページをGitHub上に公開することである．所要時間の目安は80〜110分．
+
+[応用編のページへ](git2.qmd)
 
 ## このガイドの地図
 
