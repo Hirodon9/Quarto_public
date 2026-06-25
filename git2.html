@@ -1,0 +1,1102 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.26">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Git応用編：同期と歴史操作 – はじめてのGit / GitHub</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-1d4f84655f446305ac42a8f1abcf7405.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating fullcontent quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">
+      はじめてのGit / GitHub
+      </li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">はじめてのGit / GitHub</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+ <span class="menu-text">git_github_guide.qmd</span>
+  </li>
+        <li class="sidebar-item">
+ <span class="menu-text">git_advanced_guide.qmd</span>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Git応用編：同期と歴史操作</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="sec-git-advanced" class="level1">
+<h1>Git応用編：同期と歴史操作</h1>
+<p>本稿は，「はじめてのGit / GitHub」（基礎編）において意図的に範囲外とした事項，すなわちブランチ・マージ・コンフリクト・pull／fetch・歴史操作（revert／reset）・stashを扱う続編である．基礎編で導入したワーキングツリー・インデックス・リポジトリという3つの場所，および<code>init</code>・<code>add</code>・<code>commit</code>・<code>push</code>という基本サイクルを既に理解していることを前提とする．</p>
+<p>本稿では，複数の環境（例えば自宅のPCと外出先のタブレット）から同一のリポジトリを操作する場面を主な想定として，同期に伴って生じる事象と，その対処を整理する．</p>
+<hr>
+<section id="sec-storage-topology" class="level2">
+<h2 class="anchored" data-anchor-id="sec-storage-topology">1. 保存領域の全体像</h2>
+<p>Gitは，4つの保存領域と1つのスタック領域との間で，データを移動させる仕組みであると整理できる．基礎編で導入したワーキングツリー・インデックス・ローカルリポジトリ・リモートリポジトリに，本稿では<strong>Stash</strong>という一時退避領域を加える．</p>
+<pre class="mermaid"><code>graph TD
+    %% ノード定義
+    Remote((&lt;b&gt;Remote Repo&lt;/b&gt;&lt;br&gt;GitHub&lt;br&gt;共有DB))
+    Local((&lt;b&gt;Local Repo&lt;/b&gt;&lt;br&gt;.git/objects&lt;br&gt;ローカルDB))
+    Index[&lt;b&gt;Index&lt;/b&gt;&lt;br&gt;Staging Area&lt;br&gt;コミット設計図]
+    Work[&lt;b&gt;Workspace&lt;/b&gt;&lt;br&gt;作業フォルダ&lt;br&gt;可変状態]
+    Stash&gt;&lt;b&gt;Stash&lt;/b&gt;&lt;br&gt;LIFOスタック&lt;br&gt;一時避難所]
+
+    %% 送信フロー
+    Work -- add --&gt; Index
+    Index -- commit --&gt; Local
+    Local -- push --&gt; Remote
+
+    %% 受信フロー
+    Remote -- fetch --&gt; Local
+    Local -- merge --&gt; Work
+    Remote -- pull (fetch+merge) --&gt; Work
+
+    %% 歴史操作・移動
+    Local -- checkout / switch --&gt; Work
+    Local -- revert (打ち消しコミット) --&gt; Local
+    Local -- reset (巻き戻し) --&gt; Local
+
+    %% 緊急避難
+    Work -- stash push --&gt; Stash
+    Stash -- stash pop --&gt; Work
+
+    %% スタイル
+    style Remote fill:#e3f2fd,stroke:#1565c0,stroke-width:2px
+    style Local fill:#e3f2fd,stroke:#1565c0,stroke-width:2px
+    style Index fill:#fff9c4,stroke:#fbc02d,stroke-width:2px
+    style Work fill:#ffebee,stroke:#c62828,stroke-width:2px
+    style Stash fill:#f3e5f5,stroke:#6a1b9a,stroke-width:2px</code></pre>
+<p>各領域の性質を以下に整理する．</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>領域名</th>
+<th>物理的実体</th>
+<th>役割と特性</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Workspace（ワーキングツリー）</td>
+<td>目の前のファイル</td>
+<td>可変．エディタで編集している生のデータであり，Git管理外の状態も含まれる</td>
+</tr>
+<tr class="even">
+<td>Index（ステージング）</td>
+<td><code>.git/index</code></td>
+<td>バッファ．次のコミットに含まれる予定のファイル一覧とハッシュ値を保持する，緩衝領域に相当する</td>
+</tr>
+<tr class="odd">
+<td>Local Repo（ローカルリポジトリ）</td>
+<td><code>.git/objects</code></td>
+<td>不変DB．確定した歴史（コミット）が保存される．実体はハッシュチェーン構造を持つ</td>
+</tr>
+<tr class="even">
+<td>Remote Repo（リモートリポジトリ）</td>
+<td>GitHubサーバー</td>
+<td>中央DB．複数の環境と同期するための共有ストレージ</td>
+</tr>
+</tbody>
+</table>
+<div id="def-stash" class="theorem definition">
+<p><span class="theorem-title"><strong>Definition 1 (Stash)</strong></span> <br> Stashとは，作業中の未コミットの変更を一時的に退避させておくためのLIFO（後入れ先出し）スタックを指す．「急にfetchを行いたいが，現在の作業をコミットしたくない」という場面で用いられる．</p>
+</div>
+<hr>
+</section>
+<section id="sec-pointers" class="level2">
+<h2 class="anchored" data-anchor-id="sec-pointers">2. ポインタという考え方</h2>
+<p>Gitの挙動は，「ポインタ」と呼ばれる場所を示す名札を，どのコミットへ向けるかによって決まると整理できる．ここでは主要な3種のポインタを導入する．</p>
+<div id="def-head" class="theorem definition">
+<p><span class="theorem-title"><strong>Definition 2 (HEAD)</strong></span> <br> HEADとは，現在ワーキングツリーに展開されているコミットを指すポインタである．通常はブランチ名を経由して，間接的にコミットを指す．</p>
+</div>
+<div id="def-branch-pointer" class="theorem definition">
+<p><span class="theorem-title"><strong>Definition 3 (ブランチ)</strong></span> <br> ブランチ（例：<code>main</code>）とは，手元の歴史における最先端のコミットに付されたラベルを指す．新たなコミットが生成されるたびに，当該ブランチは自動的に新しいコミットへ移動する．</p>
+</div>
+<div id="def-remote-tracking-branch" class="theorem definition">
+<p><span class="theorem-title"><strong>Definition 4 (リモート追跡ブランチ)</strong></span> <br> リモート追跡ブランチ（例：<code>origin/main</code>）とは，前回の通信時点におけるリモートリポジトリ上のブランチの位置を記録したものを指す．<code>fetch</code>または<code>push</code>の実行時にのみ更新され，手動で移動させることはできない．</p>
+</div>
+<section id="同期が取れている状態" class="level3">
+<h3 class="anchored" data-anchor-id="同期が取れている状態">2-1. 同期が取れている状態</h3>
+<p><code>fetch</code>の直後で何らの変更も行っていない場合，3つのポインタはすべて同一のコミットを指す．</p>
+<pre class="mermaid"><code>graph RL
+    HEAD["HEAD"] --&gt; main["main"]
+    main --&gt; C2
+    origin_main["origin/main"] --&gt; C2
+    C2[Commit 2] --&gt; C1[Commit 1]
+
+    style HEAD fill:#ff9800,stroke:#f57c00,stroke-width:2px,color:white
+    style main fill:#4caf50,stroke:#388e3c,stroke-width:2px,color:white
+    style origin_main fill:#2196f3,stroke:#1976d2,stroke-width:2px,color:white</code></pre>
+</section>
+<section id="ローカルでコミットした状態" class="level3">
+<h3 class="anchored" data-anchor-id="ローカルでコミットした状態">2-2. ローカルでコミットした状態</h3>
+<p><code>git commit</code>を実行すると，歴史が1つ進む．HEADは<code>main</code>とともに新しいコミットへ移動するが，<code>origin/main</code>はその場に取り残される（サーバー側にはまだ伝達されていないためである）．</p>
+<pre class="mermaid"><code>graph RL
+    HEAD["HEAD"] --&gt; main["main"]
+    main --&gt; C3
+    origin_main["origin/main"] --&gt; C2
+    C3[Commit 3] --&gt; C2[Commit 2] --&gt; C1[Commit 1]
+
+    style HEAD fill:#ff9800,stroke:#f57c00,stroke-width:2px,color:white
+    style main fill:#4caf50,stroke:#388e3c,stroke-width:2px,color:white
+    style origin_main fill:#2196f3,stroke:#1976d2,stroke-width:2px,color:white</code></pre>
+<p>このポインタ間の「ずれ」が，いわゆる「pushしていない変更が存在する」状態に相当する．</p>
+</section>
+<section id="各コマンドによるポインタの動き" class="level3">
+<h3 class="anchored" data-anchor-id="各コマンドによるポインタの動き">2-3. 各コマンドによるポインタの動き</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>コマンド</th>
+<th>動くポインタ</th>
+<th>動作の内容</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>git commit</code></td>
+<td>HEADと，HEADが指すブランチ</td>
+<td>新しいコミットを生成し，ブランチをそこへ進める．<code>origin/main</code>は動かないため，ローカルDBのみが更新される</td>
+</tr>
+<tr class="even">
+<td><code>git fetch</code></td>
+<td><code>origin/main</code>のみ</td>
+<td>サーバーから最新情報を取得し，<code>origin/main</code>をサーバーの現在地まで進める．HEADや<code>main</code>には影響しないため，安全な「確認」操作である</td>
+</tr>
+<tr class="odd">
+<td><code>git merge origin/main</code></td>
+<td>HEADと<code>main</code></td>
+<td><code>origin/main</code>の内容を<code>main</code>へ統合して進める</td>
+</tr>
+<tr class="even">
+<td><code>git push</code></td>
+<td>リモートサーバー上の<code>main</code></td>
+<td>手元の<code>main</code>の位置までサーバー側のポインタを進めさせる．通信成功後，手元の<code>origin/main</code>もこれに追従して更新される</td>
+</tr>
+<tr class="odd">
+<td><code>git checkout</code>／<code>git switch</code></td>
+<td>HEADのみ</td>
+<td>HEADを別のブランチ，または過去のコミットへ付け替える．これによりワーキングツリーの内容が，その時点の状態へ書き換わる</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="detached-head" class="level3">
+<h3 class="anchored" data-anchor-id="detached-head">2-4. Detached HEAD</h3>
+<p>通常，HEADはブランチ名を経由して間接的にコミットを指す．これに対し，<code>git checkout &lt;コミットID&gt;</code>のように，ブランチを経由せず直接コミットを指す状態を<strong>Detached HEAD</strong>（分離したHEAD）と呼ぶ．</p>
+<pre class="mermaid"><code>graph RL
+    HEAD["HEAD"] --&gt; C2
+    main["main"] --&gt; C3
+    C3[Commit 3] --&gt; C2[Commit 2] --&gt; C1[Commit 1]
+
+    style HEAD fill:#ff9800,stroke:#f57c00,stroke-width:2px,color:white
+    style main fill:#fff,stroke:#333,stroke-width:2px,stroke-dasharray: 5 5</code></pre>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Important
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Detached HEADの状態でコミットを行っても，<code>main</code>ブランチは進まない．別のブランチへ移動すると，当該コミットはいずれのブランチからも参照されない状態となり，最終的に消滅する．歴史操作や，過去の状態を一時的に確認する目的で，この状態は意図せず生じることがある．</p>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="sec-sync-commands" class="level2">
+<h2 class="anchored" data-anchor-id="sec-sync-commands">3. 同期系コマンド</h2>
+<p>データの移動を担うコマンド群を，送信と受信に分けて整理する．</p>
+<section id="送信プロセス" class="level3">
+<h3 class="anchored" data-anchor-id="送信プロセス">3-1. 送信プロセス</h3>
+<ol type="1">
+<li><strong><code>git add</code></strong>（ワーキングツリー→インデックス）：ファイルのハッシュ値を計算し，Blobオブジェクトとして登録した上で，インデックスの一覧を更新する</li>
+<li><strong><code>git commit</code></strong>（インデックス→ローカルリポジトリ）：インデックスの状態を元にTreeオブジェクトを生成し，状態を凍結する．HEADの指すブランチが進む</li>
+<li><strong><code>git push</code></strong>（ローカルリポジトリ→リモートリポジトリ）：手元の歴史をサーバーへ転送し，サーバー側のポインタを更新する</li>
+</ol>
+</section>
+<section id="受信プロセス" class="level3">
+<h3 class="anchored" data-anchor-id="受信プロセス">3-2. 受信プロセス</h3>
+<ol start="4" type="1">
+<li><strong><code>git fetch</code></strong>（リモートリポジトリ→ローカルリポジトリ）：サーバーから最新データを取得するが，ワーキングツリーには反映しない．<code>origin/main</code>のみが更新されるため，安全な操作である</li>
+<li><strong><code>git merge</code></strong>（ローカルリポジトリ→ワーキングツリー）：fetchによって取得したデータと，手元のデータを統合する．ファイルの内容が書き換わるため，ここで<a href="#def-conflict" class="quarto-xref">Definition&nbsp;6</a>が生じる可能性がある</li>
+<li><strong><code>git pull</code></strong>（リモートリポジトリ→ワーキングツリー）：<code>fetch</code>と<code>merge</code>を連続して実行する操作である．内容を確認せずに統合が行われるため，競合の発生時に意図しない結果を招くことがある．</li>
+</ol>
+<p><span class="math display">\[
+\text{pull} = \text{fetch} + \text{merge}
+\]</span></p>
+<hr>
+</section>
+</section>
+<section id="sec-history-operations" class="level2">
+<h2 class="anchored" data-anchor-id="sec-history-operations">4. 歴史操作系コマンド</h2>
+<p>ポインタをどのように動かすかによって，挙動が異なる一群のコマンドを扱う．破壊性の有無によって2種に分類する．</p>
+<section id="非破壊的な操作" class="level3">
+<h3 class="anchored" data-anchor-id="非破壊的な操作">4-1. 非破壊的な操作</h3>
+<ul>
+<li><strong><code>git checkout</code>／<code>git switch</code></strong>（ローカルリポジトリ→ワーキングツリー）：指定した過去のコミットの状態を，ワーキングツリーへ展開する操作である．現在の作業内容は失われる（事前の退避が必要）が，歴史自体は破壊されない．</li>
+<li><strong><code>git revert</code></strong>（ローカルリポジトリ→ローカルリポジトリ）：指定したコミットの逆変換を行う，新たなコミットを生成する操作である．状態<span class="math inline">\(S\)</span>に操作<span class="math inline">\(A\)</span>を加えた<span class="math inline">\(S+A\)</span>に対し，操作<span class="math inline">\(-A\)</span>を加えることで<span class="math inline">\(S+A+(-A)=S\)</span>へ戻す，という考え方に相当する．歴史は未来に向かって進むため，push済みの変更を取り消す場合に適している．</li>
+</ul>
+</section>
+<section id="破壊的な操作" class="level3">
+<h3 class="anchored" data-anchor-id="破壊的な操作">4-2. 破壊的な操作</h3>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Important
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong><code>git reset</code></strong>（ローカルリポジトリ内でのポインタの強制移動）は，時間を遡る操作である．戻った地点より未来のコミットは参照を失い，最終的にガベージコレクションの対象となる．自分のみが作業している場合の修正に限り用いるべきであり，push後に実行すると，他者の歴史との不整合により重大な問題を招く．</p>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="sec-stash" class="level2">
+<h2 class="anchored" data-anchor-id="sec-stash">5. 緊急避難：Stash</h2>
+<p><strong><code>git stash</code></strong>（ワーキングツリー⇄<a href="#def-stash" class="quarto-xref">Definition&nbsp;1</a>）は，作業中の未コミットの変更を，一時的に<a href="#def-stash" class="quarto-xref">Definition&nbsp;1</a>へ退避させる操作である．「急にfetchを行いたいが，現在の作業はコミットしたくない」という場面で利用する．退避させた変更は，<code>git stash pop</code>によってワーキングツリーへ復帰させることができる．</p>
+<hr>
+</section>
+<section id="sec-sync-trouble" class="level2">
+<h2 class="anchored" data-anchor-id="sec-sync-trouble">6. 同期時に生じる事故とその対処</h2>
+<section id="枝分かれdivergent-branches" class="level3">
+<h3 class="anchored" data-anchor-id="枝分かれdivergent-branches">6-1. 枝分かれ（Divergent branches）</h3>
+<p>リモート（GitHub）とローカル（手元）の双方で，それぞれ独立に新しいコミットが生成された場合，歴史がY字型に枝分かれする．この状態に至ると，Gitは合流の方法を決定できず，操作を停止する．</p>
+<p>これまで問題が生じなかったのは，手元に新しいコミットが存在しない状態が続いていたためである．この場合，Gitはリモートの最新版まで手元の状態を進めるだけで済む．これを<strong>Fast-forward</strong>（早送り）と呼ぶ．これに対し，手元でコミットを行った後に同期を行うと，リモートの変更と手元のコミットが衝突し，枝分かれが生じる．</p>
+</section>
+<section id="マージ設定の固定" class="level3">
+<h3 class="anchored" data-anchor-id="マージ設定の固定">6-2. マージ設定の固定</h3>
+<p>以下のコマンドにより，枝分かれが生じた際の合流方法を一つに定めることができる．</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> config pull.rebase false</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>これにより，以降枝分かれが生じた場合には，自動的に<strong>マージ</strong>（合流コミットの作成）という方式によって解決されるようになる．</p>
+<div id="def-merge-rebase" class="theorem definition">
+<p><span class="theorem-title"><strong>Definition 5 (マージとリベースの違い)</strong></span> <br></p>
+<ul>
+<li><strong>マージ（Merge）</strong>：2つの道筋を合流させ，新たな結節点（マージコミット）を作成する方式である．歴史は分岐した形のまま残るが，実際の経緯に忠実であり，安全性が高い．</li>
+<li><strong>リベース（Rebase）</strong>：手元の変更履歴を，リモートの最新版の後方へ付け替える方式である．歴史は一直線に整理されるが，操作にはより高度な習熟を要する．</li>
+</ul>
+</div>
+</section>
+<section id="枝分かれと競合コンフリクトの違い" class="level3">
+<h3 class="anchored" data-anchor-id="枝分かれと競合コンフリクトの違い">6-3. 枝分かれと競合（コンフリクト）の違い</h3>
+<p>両者は異なる段階で生じる別種の問題であるため，区別して理解する必要がある．</p>
+<ul>
+<li><strong>枝分かれ</strong>：合流の<strong>方針</strong>が未決定である段階の事象を指す</li>
+<li><strong>コンフリクト</strong>：方針は決定済みであるが，<strong>ファイルの内容</strong>が衝突し，自動的な統合が行えない段階の事象を指す</li>
+</ul>
+<div id="def-conflict" class="theorem definition">
+<p><span class="theorem-title"><strong>Definition 6 (コンフリクト)</strong></span> <br> コンフリクトとは，複数の変更を統合する際に，同一箇所への変更が競合し，Gitが自動的に統合を行えない状態を指す．発生時には，ファイル内に<code>&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD</code>のような記号が挿入される．対処は次の手順による．</p>
+<ol type="1">
+<li>エディタ上に表示される選択肢（例：「両方の変更を取り込む」）から方針を選ぶ</li>
+<li>ファイルの内容を整理した上で保存する</li>
+<li>インデックスへ登録し，コミットを行う</li>
+</ol>
+</div>
+<hr>
+</section>
+</section>
+<section id="sec-gui-marks" class="level2">
+<h2 class="anchored" data-anchor-id="sec-gui-marks">7. GUI上の表示記号</h2>
+<p>VS Codeのソース管理パネルに表示される記号は，これまでに導入した概念と以下のように対応する．</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>表示</th>
+<th>意味</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>M</code>（Modified）</td>
+<td>修正されたファイルであることを示す</td>
+</tr>
+<tr class="even">
+<td><code>U</code>（Untracked）</td>
+<td>新規に作成され，Gitの管理対象にまだ含まれていないファイルであることを示す</td>
+</tr>
+<tr class="odd">
+<td>アスタリスク（<code>*</code>）</td>
+<td>保存（<code>Cmd + S</code>）またはコミットが未完了の，編集中のファイルであることを示す</td>
+</tr>
+<tr class="even">
+<td>HEAD</td>
+<td><a href="#def-head" class="quarto-xref">Definition&nbsp;2</a>に対応する表示である</td>
+</tr>
+<tr class="odd">
+<td>Origin</td>
+<td>リモートリポジトリ（GitHub）を指す表示である</td>
+</tr>
+<tr class="even">
+<td>Staged</td>
+<td><strong>?@def-index</strong>へ登録済みの状態を指す表示である</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="sec-branch-operations" class="level2">
+<h2 class="anchored" data-anchor-id="sec-branch-operations">8. ブランチの操作</h2>
+<ul>
+<li><strong>作成</strong>：画面左下に表示されている現在のブランチ名（例：<code>main</code>）を選択し，「新しいブランチ」を選ぶ</li>
+<li><strong>削除</strong>：<code>main</code>へ一度移動した上で，不要なブランチを右クリックし，削除を選ぶ</li>
+</ul>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>マージが完了したブランチは削除することが望ましい．不要なブランチを残さないことが，リポジトリを整理された状態に保つ上での原則となる．</p>
+</div>
+</div>
+<hr>
+</section>
+<section id="sec-multi-env-workflow" class="level2">
+<h2 class="anchored" data-anchor-id="sec-multi-env-workflow">9. 複数環境を同期させる際の手順</h2>
+<p>複数の環境（例：自宅のPCと外出先の端末）から同一のリポジトリを操作する場合，以下の手順に従うことで，事故の発生率を大きく下げることができる．</p>
+<section id="作業開始時" class="level3">
+<h3 class="anchored" data-anchor-id="作業開始時">9-1. 作業開始時</h3>
+<ol type="1">
+<li><strong><code>git fetch</code></strong>を実行し，最新の情報を取得する</li>
+<li>他の環境での変更が存在するかを確認する</li>
+<li><strong><code>git merge</code></strong>（または<code>pull</code>）により，変更を手元へ取り込む</li>
+</ol>
+</section>
+<section id="作業終了時" class="level3">
+<h3 class="anchored" data-anchor-id="作業終了時">9-2. 作業終了時</h3>
+<ol type="1">
+<li><strong><code>git add .</code></strong>により，変更をインデックスへ登録する</li>
+<li><strong><code>git commit -m "update"</code></strong>により，ローカルリポジトリへ確定する</li>
+<li><strong><code>git push</code></strong>により，リモートリポジトリへ送信する</li>
+</ol>
+</section>
+<section id="誤りが生じた場合の対処" class="level3">
+<h3 class="anchored" data-anchor-id="誤りが生じた場合の対処">9-3. 誤りが生じた場合の対処</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>段階</th>
+<th>対処</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>push前</td>
+<td>VS Codeの「Undo Last Commit」機能，または<code>git reset --soft</code>を用いる</td>
+</tr>
+<tr class="even">
+<td>push後</td>
+<td><code>git revert</code>により打ち消しコミットを作成する</td>
+</tr>
+</tbody>
+</table>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>作業を行う際には，「データは現在どこに存在するか」「各ポインタはどこを指しているか」の2点を意識すると，事象の把握が容易になる．</p>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="sec-glossary-advanced" class="level2">
+<h2 class="anchored" data-anchor-id="sec-glossary-advanced">用語さくいん（応用編）</h2>
+<p>基礎編の用語さくいんに含まれない用語のみを以下に示す．</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>用語</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Stash</td>
+<td><a href="#def-stash" class="quarto-xref">Definition&nbsp;1</a>を参照</td>
+</tr>
+<tr class="even">
+<td>HEAD</td>
+<td><a href="#def-head" class="quarto-xref">Definition&nbsp;2</a>を参照</td>
+</tr>
+<tr class="odd">
+<td>ブランチ</td>
+<td><a href="#def-branch-pointer" class="quarto-xref">Definition&nbsp;3</a>を参照</td>
+</tr>
+<tr class="even">
+<td>リモート追跡ブランチ（<code>origin/main</code>）</td>
+<td><a href="#def-remote-tracking-branch" class="quarto-xref">Definition&nbsp;4</a>を参照</td>
+</tr>
+<tr class="odd">
+<td>コンフリクト</td>
+<td><a href="#def-conflict" class="quarto-xref">Definition&nbsp;6</a>を参照</td>
+</tr>
+<tr class="even">
+<td>マージ／リベース</td>
+<td><a href="#def-merge-rebase" class="quarto-xref">Definition&nbsp;5</a>を参照</td>
+</tr>
+<tr class="odd">
+<td>Fast-forward</td>
+<td>リモートの最新版まで，手元の状態を単純に進めるだけで合流が完了する状態を指す</td>
+</tr>
+<tr class="even">
+<td>Divergent branches（枝分かれ）</td>
+<td>リモートとローカルの双方で独立にコミットが生成され，歴史がY字型に分岐した状態を指す</td>
+</tr>
+<tr class="odd">
+<td>Detached HEAD</td>
+<td>HEADがブランチを経由せず，直接コミットを指している状態を指す（<a href="#sec-pointers" class="quarto-xref">Section&nbsp;1.2</a>を参照）</td>
+</tr>
+<tr class="even">
+<td><code>git revert</code></td>
+<td>指定したコミットを打ち消す，新たなコミットを作成する操作を指す</td>
+</tr>
+<tr class="odd">
+<td><code>git reset</code></td>
+<td>ポインタを過去の地点へ強制的に移動させる，破壊的な操作を指す</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="本稿の範囲外とした事項" class="level2">
+<h2 class="anchored" data-anchor-id="本稿の範囲外とした事項">本稿の範囲外とした事項</h2>
+<p>以下の事項については，本稿でも扱わない．必要が生じた時点で別途調査することとする．</p>
+<ul>
+<li>リベースの実際の操作手順（コンフリクト発生時の対処を含む）</li>
+<li>サブモジュール・サブツリーによる複数リポジトリの統合</li>
+<li>タグおよびGitHub Releaseを用いた節目の記録</li>
+<li><code>.gitignore</code>の記述規則</li>
+</ul>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/Hirodon9\.github\.io\/Quarto_public\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
