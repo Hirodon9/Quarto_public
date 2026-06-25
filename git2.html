@@ -103,6 +103,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-label": "Search"
   }
 }</script>
+<script src="site_libs/quarto-diagram/mermaid.min.js"></script>
+<script src="site_libs/quarto-diagram/mermaid-init.js"></script>
+<link href="site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
 
   <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
@@ -187,7 +190,12 @@ window.Quarto = {
 <section id="sec-storage-topology" class="level2">
 <h2 class="anchored" data-anchor-id="sec-storage-topology">1. 保存領域の全体像</h2>
 <p>Gitは，4つの保存領域と1つのスタック領域との間で，データを移動させる仕組みであると整理できる．基礎編で導入したワーキングツリー・インデックス・ローカルリポジトリ・リモートリポジトリに，本稿では<strong>Stash</strong>という一時退避領域を加える．</p>
-<pre class="mermaid"><code>graph TD
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">graph TD
     %% ノード定義
     Remote((&lt;b&gt;Remote Repo&lt;/b&gt;&lt;br&gt;GitHub&lt;br&gt;共有DB))
     Local((&lt;b&gt;Local Repo&lt;/b&gt;&lt;br&gt;.git/objects&lt;br&gt;ローカルDB))
@@ -219,7 +227,13 @@ window.Quarto = {
     style Local fill:#e3f2fd,stroke:#1565c0,stroke-width:2px
     style Index fill:#fff9c4,stroke:#fbc02d,stroke-width:2px
     style Work fill:#ffebee,stroke:#c62828,stroke-width:2px
-    style Stash fill:#f3e5f5,stroke:#6a1b9a,stroke-width:2px</code></pre>
+    style Stash fill:#f3e5f5,stroke:#6a1b9a,stroke-width:2px
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
 <p>各領域の性質を以下に整理する．</p>
 <table class="caption-top table">
 <colgroup>
@@ -277,7 +291,12 @@ window.Quarto = {
 <section id="同期が取れている状態" class="level3">
 <h3 class="anchored" data-anchor-id="同期が取れている状態">2-1. 同期が取れている状態</h3>
 <p><code>fetch</code>の直後で何らの変更も行っていない場合，3つのポインタはすべて同一のコミットを指す．</p>
-<pre class="mermaid"><code>graph RL
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">graph RL
     HEAD["HEAD"] --&gt; main["main"]
     main --&gt; C2
     origin_main["origin/main"] --&gt; C2
@@ -285,12 +304,23 @@ window.Quarto = {
 
     style HEAD fill:#ff9800,stroke:#f57c00,stroke-width:2px,color:white
     style main fill:#4caf50,stroke:#388e3c,stroke-width:2px,color:white
-    style origin_main fill:#2196f3,stroke:#1976d2,stroke-width:2px,color:white</code></pre>
+    style origin_main fill:#2196f3,stroke:#1976d2,stroke-width:2px,color:white
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
 </section>
 <section id="ローカルでコミットした状態" class="level3">
 <h3 class="anchored" data-anchor-id="ローカルでコミットした状態">2-2. ローカルでコミットした状態</h3>
 <p><code>git commit</code>を実行すると，歴史が1つ進む．HEADは<code>main</code>とともに新しいコミットへ移動するが，<code>origin/main</code>はその場に取り残される（サーバー側にはまだ伝達されていないためである）．</p>
-<pre class="mermaid"><code>graph RL
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">graph RL
     HEAD["HEAD"] --&gt; main["main"]
     main --&gt; C3
     origin_main["origin/main"] --&gt; C2
@@ -298,7 +328,13 @@ window.Quarto = {
 
     style HEAD fill:#ff9800,stroke:#f57c00,stroke-width:2px,color:white
     style main fill:#4caf50,stroke:#388e3c,stroke-width:2px,color:white
-    style origin_main fill:#2196f3,stroke:#1976d2,stroke-width:2px,color:white</code></pre>
+    style origin_main fill:#2196f3,stroke:#1976d2,stroke-width:2px,color:white
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
 <p>このポインタ間の「ずれ」が，いわゆる「pushしていない変更が存在する」状態に相当する．</p>
 </section>
 <section id="各コマンドによるポインタの動き" class="level3">
@@ -348,13 +384,24 @@ window.Quarto = {
 <section id="detached-head" class="level3">
 <h3 class="anchored" data-anchor-id="detached-head">2-4. Detached HEAD</h3>
 <p>通常，HEADはブランチ名を経由して間接的にコミットを指す．これに対し，<code>git checkout &lt;コミットID&gt;</code>のように，ブランチを経由せず直接コミットを指す状態を<strong>Detached HEAD</strong>（分離したHEAD）と呼ぶ．</p>
-<pre class="mermaid"><code>graph RL
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">graph RL
     HEAD["HEAD"] --&gt; C2
     main["main"] --&gt; C3
     C3[Commit 3] --&gt; C2[Commit 2] --&gt; C1[Commit 1]
 
     style HEAD fill:#ff9800,stroke:#f57c00,stroke-width:2px,color:white
-    style main fill:#fff,stroke:#333,stroke-width:2px,stroke-dasharray: 5 5</code></pre>
+    style main fill:#fff,stroke:#333,stroke-width:2px,stroke-dasharray: 5 5
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
 <div class="callout callout-style-default callout-important callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -438,7 +485,7 @@ Important
 <section id="マージ設定の固定" class="level3">
 <h3 class="anchored" data-anchor-id="マージ設定の固定">6-2. マージ設定の固定</h3>
 <p>以下のコマンドにより，枝分かれが生じた際の合流方法を一つに定めることができる．</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> config pull.rebase false</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> config pull.rebase false</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>これにより，以降枝分かれが生じた場合には，自動的に<strong>マージ</strong>（合流コミットの作成）という方式によって解決されるようになる．</p>
 <div id="def-merge-rebase" class="theorem definition">
 <p><span class="theorem-title"><strong>Definition 5 (マージとリベースの違い)</strong></span> <br></p>
