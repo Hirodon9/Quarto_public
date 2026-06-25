@@ -9,3 +9,9 @@ website:
         text: Git
       - href: git2.qmd
         text: Git2
+
+format:
+  html:
+    toc: true            # 目次（Table of Contents）を有効にする
+    toc-location: left   # 目次をページの左側に配置する
+    toc-depth: 2         # 見出しの深さ（### まで目次に含める）
