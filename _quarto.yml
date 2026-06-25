@@ -1,0 +1,115 @@
+project:
+  type: default
+  output-dir: _output
+  #post-render: powershell -Command "Remove-Item -Path '_output/figures', '*_files' -Recurse -Force -ErrorAction SilentlyContinue"
+  post-render: 
+    - powershell -NoProfile -Command "Get-ChildItem -Path . -Directory -Filter '*_files' -Recurse | Where-Object { $_.FullName -notmatch '_output' } | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue; exit 0"
+
+lang: ja
+
+# number-sections: false
+
+# --- crossref（参照を有効にする。ハイパーリンクは付けない）---
+crossref:
+  ref-hyperlink: false  #ハイパーリンク無効化
+  labels: arabic        #図表番号アラビア数字
+  chapters: false       #図表番号に章番号を含めない
+  fig-prefix: "Fig."
+
+
+#jupyter: python3  #↑jupyterカーネルを明示
+
+execute:
+  echo: false
+  fig-format: png
+  fig-dpi: 300
+#↑コードは出さず、結果だけ出す
+
+bibliography: ../90_resources/references.bib  # bibファイルの場所を指定
+csl: ../../../99_Hub/resources/csl/ieee.csl  # Horilab直下の共通CSLを参照
+
+
+# --- 各フォーマットの個別設定 ---
+format:
+  # 開発用：高速HTML出力（デフォルト）
+  html:
+    embed-resources: true # リソースを埋め込む
+    #post-render: 
+     #- powershell -NoProfile -Command "Remove-Item -Path '*_files' -Recurse -Force -ErrorAction SilentlyContinue; exit 0"
+    # 必要に応じてテーマなども追加可能
+    # theme: cosmo
+
+  # プレビュー用
+  pdf:
+    pdf-engine: lualatex
+    documentclass: jlreq
+    fontsize: 10pt
+    geometry: margin=22mm
+    keep-tex: false
+    include-in-header: ../90_resources/tex/header.tex 
+    header-includes:
+      # ── 行間・段落は軽く調整 ──
+      - \usepackage{setspace}
+      - \setstretch{0.95}            % 行送り
+      - \setlength{\parskip}{0pt}    % 段落アキ
+      - \setlength{\parindent}{1em}  % 字下げ
+      - \usepackage{indentfirst}     % 一段落目字下げ
+      # --- 見出し設定（jlreq専用） ---
+      - \ModifyHeading{section}{font=\sffamily\Large,before_space=1.0\baselineskip,after_space=0.5\baselineskip}
+      - \ModifyHeading{subsection}{font=\sffamily\large,before_space=0.7\baselineskip,after_space=0.3\baselineskip}
+      - \ModifyHeading{subsubsection}{font=\sffamily,before_space=0.7\baselineskip,after_space=0.3\baselineskip}
+      # --- 見出しの番号書式の変更（1.タイトルのようにドットを付ける） ---
+      - \makeatletter
+      - \renewcommand{\thesection}{\arabic{section}.\kern-0.7em}
+      - \renewcommand{\thesubsection}{\arabic{section}.\arabic{subsection}.\kern-0.7em}
+      - \renewcommand{\thesubsubsection}{\arabic{section}.\arabic{subsection}.\arabic{subsubsection}.\kern-0.5em}
+      - \makeatother
+      # ── キャプション間隔 ──
+      - \usepackage{caption}
+      - \captionsetup{skip=2pt}
+      # --- 日本語フォント設定 ---
+      #- |
+        #\usepackage{luatexja-fontspec}
+        #\setmainjfont{Hiragino Mincho ProN}
+        #\setsansjfont{Hiragino Sans}
+        #\setmonojfont{Hiragino Mincho ProN}
+      - \usepackage[haranoaji]{luatexja-preset}
+      # -- 確認用の枠線が欲しければ ↓ を一時的に有効化）--
+      # - \usepackage{showframe}
+
+
+  # 提出用：本文TeX書き出し (appi2013用)
+  latex:
+    template: templates/body-only.tex
+    keep-tex: true
+    latex-auto-install: false
+    cite-method: natbib  # または biblatex
+    fig-format: pdf
+    include-in-header:
+      text: |
+        \providecommand{\phantomsection}{}
+  
+  pptx: default
+
+  beamer:
+    pdf-engine: lualatex
+    include-in-header: _quarto/header.tex
+    theme: metropolis
+    fontsize: 10pt
+    colortheme: dove              # 白系配色
+    aspectratio: 169              # 16:9 スライド
+    keep-tex: false                # デバッグ用に .tex を残す
+    toc: false                    # 目次スライドを自動生成しない
+    header-includes:
+      - \usepackage{luatexja-fontspec}
+      - \setmainjfont{Hiragino Mincho ProN}
+      - \setsansjfont{Hiragino Sans}
+      - \setmonojfont{Hiragino Mincho ProN}
+
+
+
+
+
+   
+
+
